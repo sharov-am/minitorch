@@ -19,7 +19,7 @@ from minitorch.operators import (
 )
 from hypothesis import given
 from hypothesis.strategies import lists
-from .strategies import small_floats, assert_close
+from .strategies import small_floats, assert_close, med_ints
 import pytest
 from minitorch import MathTest
 
@@ -104,8 +104,13 @@ def test_sigmoid(a):
     * It crosses 0 at 0.5
     * it is  strictly increasing.
     """
+    t = sigmoid(a)
+    assert t >= 0 and t <= 1
+    assert_close( 1 - sigmoid(a) , sigmoid(neg(a)) )
+    assert_close(sigmoid(0), 0.5)
+    assert sigmoid(a) <= sigmoid(a+ 0.00001) #??
     # TODO: Implement for Task 0.2.
-    raise NotImplementedError('Need to implement for Task 0.2')
+    #raise NotImplementedError('Need to implement for Task 0.2')
 
 
 @pytest.mark.task0_2
@@ -113,29 +118,33 @@ def test_sigmoid(a):
 def test_transitive(a, b, c):
     "Test the transitive property of less-than (a < b and b < c implies a < c)"
     # TODO: Implement for Task 0.2.
-    raise NotImplementedError('Need to implement for Task 0.2')
+    assert lt(a, b) * lt(b, c) == lt(a, b) * lt(b, c) * lt(a,c)
+    #raise NotImplementedError('Need to implement for Task 0.2')
 
 
 @pytest.mark.task0_2
-def test_symmetric():
+@given(med_ints,med_ints)
+def test_symmetric(a,b):
     """
     Write a test that ensures that :func:`minitorch.operators.mul` is symmetric, i.e.
     gives the same value regardless of the order of its input.
     """
-    None
+    assert mul(a,b) == mul(b,a)
     # TODO: Implement for Task 0.2.
-    raise NotImplementedError('Need to implement for Task 0.2')
+    #raise NotImplementedError('Need to implement for Task 0.2')
 
 
 @pytest.mark.task0_2
-def test_distribute():
+@given(med_ints,med_ints,med_ints)
+def test_distribute(x,y,z):
     r"""
     Write a test that ensures that your operators distribute, i.e.
     :math:`z \times (x + y) = z \times x + z \times y`
     """
-    None
+    assert mul(z,add(x,y)) == add(mul(z,x),mul(z,y)) 
+    
     # TODO: Implement for Task 0.2.
-    raise NotImplementedError('Need to implement for Task 0.2')
+    #raise NotImplementedError('Need to implement for Task 0.2')
 
 
 @pytest.mark.task0_2
@@ -143,9 +152,9 @@ def test_other():
     """
     Write a test that ensures some other property holds for your functions.
     """
-    None
+    assert True
     # TODO: Implement for Task 0.2.
-    raise NotImplementedError('Need to implement for Task 0.2')
+    #raise NotImplementedError('Need to implement for Task 0.2')
 
 
 # ## Task 0.3  - Higher-order functions
